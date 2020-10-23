@@ -7,6 +7,7 @@ export default async ssrContext => {
     router.push(url);
 
     await router.isReady();
-
+    // console.log(router.currentRoute.value.matched[0].path);
+    // ssrContext._chunks = router.currentRoute.value.matched[0].path;
     return app;
 }

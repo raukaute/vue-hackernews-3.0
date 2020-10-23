@@ -9,5 +9,5 @@ module.exports = (api) => ({
       },
     ],
   ],
-  plugins: api.env() === 'prod' ? ['transform-remove-console'] : [],
+  plugins: api.env() === 'prod' ? [] : [],
 });

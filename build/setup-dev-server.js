@@ -1,14 +1,16 @@
-const fs = require("fs");
-const path = require("path");
-const MFS = require("memory-fs");
-const webpack = require("webpack");
-const chokidar = require("chokidar");
-const clientConfig = require("./webpack.client.config")();
-const serverConfig = require("./webpack.server.config")();
+'use strict';
+
+/* */
+
+const path = require('path');
+const MFS = require('memory-fs');
+const webpack = require('webpack');
+const clientConfig = require('./webpack.client.config')();
+const serverConfig = require('./webpack.server.config')();
 
 const readFile = (fs, file) => {
   try {
-    return fs.readFileSync(path.join(clientConfig.output.path, file), "utf-8");
+    return fs.readFileSync(path.join(clientConfig.output.path, file), 'utf-8');
   } catch (e) {}
 };
 
@@ -26,33 +28,33 @@ module.exports = function setupDevServer(app, cb) {
     };
 
   clientConfig.entry.app = [
-    "webpack-hot-middleware/client",
+    'webpack-hot-middleware/client',
     clientConfig.entry.app,
   ];
-  clientConfig.output.filename = "[name].js";
+  clientConfig.output.filename = '[name].js';
   clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   const clientCompiler = webpack(clientConfig);
-  const devMiddleware = require("webpack-dev-middleware")(clientCompiler, {
+  const devMiddleware = require('webpack-dev-middleware')(clientCompiler, {
     publicPath: clientConfig.output.publicPath,
     noInfo: true,
   });
 
   app.use(devMiddleware);
 
-  clientCompiler.hooks.done.tap("stats", (stats) => {
+  clientCompiler.hooks.done.tap('stats', (stats) => {
     stats = stats.toJson();
     stats.errors.forEach((err) => console.error(err));
     stats.warnings.forEach((err) => console.warn(err));
     if (stats.errors.length) return;
     clientManifest = JSON.parse(
-      readFile(devMiddleware.fileSystem, "vue-ssr-client-manifest.json")
+      readFile(devMiddleware.fileSystem, 'vue-ssr-client-manifest.json')
     );
     update();
   });
 
   app.use(
-    require("webpack-hot-middleware")(clientCompiler, { heartbeat: 5000 })
+    require('webpack-hot-middleware')(clientCompiler, { heartbeat: 5000 })
   );
 
   const serverCompiler = webpack(serverConfig);
@@ -63,7 +65,7 @@ module.exports = function setupDevServer(app, cb) {
     stats = stats.toJson();
     if (stats.errors.length) return;
 
-    bundle = JSON.parse(readFile(mfs, "vue-ssr-server-bundle.json"));
+    bundle = JSON.parse(readFile(mfs, 'vue-ssr-server-bundle.json'));
     update();
   });
 

@@ -1,12 +1,14 @@
-const path = require('path'),
+const fs = require('fs'),
+  path = require('path'),
   resolve = (file) => path.resolve(__dirname, file);
 
 const express = require('express'),
+  favicon = require('serve-favicon'),
   app = express();
 
 const { createBundleRenderer } = require('vue-bundle-renderer');
 
-const isProd = false;
+const isProd = process.env.NODE_ENV === 'production';
 
 function createRenderer(bundle, options) {
   return createBundleRenderer(
@@ -15,7 +17,7 @@ function createRenderer(bundle, options) {
       runInNewContext: false,
       vueServerRenderer: require('@vue/server-renderer'),
       basedir: resolve('./dist'),
-      publicPath: '/dist/'
+      publicPath: '/dist/',
     })
   );
 }
@@ -37,7 +39,7 @@ const serve = (path, cache) =>
   express.static(resolve(path), {
     maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0,
   });
-
+app.use(favicon('./src/assets/logo-48.png'));
 app.use('/dist', serve('./dist', false));
 
 async function render(req, res) {
@@ -46,6 +48,7 @@ async function render(req, res) {
   const handleError = (err) => {
     res.status(500).send('500 | Internal Server Error');
     console.error(`error during render : ${req.url}`);
+    console.error(err);
   };
 
   const context = {
@@ -62,11 +65,13 @@ async function render(req, res) {
   // Use loadash template
   const html = `
         <!DOCTYPE html>
-            <html>
-              <head> 
-                <title>SSR Vue 3</title>
-                ${renderResourceHints()}
-                ${renderStyles()}
+            <html lang="en">
+              <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              ${renderResourceHints()}
+              ${renderStyles()}
+              <title>SSR Vue 3</title>
               </head>
               <body>
                 <div id="app">${page}</div>
@@ -74,6 +79,15 @@ async function render(req, res) {
                 </body>
             </html>
         `;
+
+  // print page to file for inspection
+  if (!isProd) {
+    fs.writeFile('rendered.html', html, (err) => {
+      if (err) {
+        throw err;
+      }
+    });
+  }
 
   res.send(html);
 }
