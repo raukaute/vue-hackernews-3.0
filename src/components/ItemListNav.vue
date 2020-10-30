@@ -37,12 +37,17 @@ export const hasMore = computed(() => props.page < props.maxPage);
 
 
 <style lang="scss">
-.news-list-nav {
+.news-list-nav, .news-list {
   background-color: #fff;
   border-radius: 2px;
 }
 
 .news-list-nav {
+  position: fixed;
+  top: 55px;
+  z-index: 998;
+  left: 0;
+  right: 0;
   padding: 15px 30px;
   text-align: center;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);

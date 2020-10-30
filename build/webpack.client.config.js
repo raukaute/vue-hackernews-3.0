@@ -16,7 +16,7 @@ module.exports = (env = {}) =>
     optimization: {
       splitChunks: {
         cacheGroups: {
-          commons: {
+          vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
             chunks: 'all',

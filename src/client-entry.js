@@ -1,5 +1,12 @@
-import { _createApp } from "./app";
+import { _createApp } from './app';
 
-const { app, router } = _createApp();
+const { app, router, store } = _createApp();
 
-router.isReady().then(() => app.mount("#app", true))
+if (window.__INITIAL_STATE__) {
+  store.replaceState(window.__INITIAL_STATE__);
+}
+
+(async (r, a) => {
+  await r.isReady();
+  a.mount('#app', true);
+})(router, app);

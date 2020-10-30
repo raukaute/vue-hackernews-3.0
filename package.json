@@ -6,12 +6,15 @@
   "private": true,
   "main": "test.js",
   "dependencies": {
+    "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "cross-env": "^7.0.2",
-    "file-loader": "^6.1.1",
+    "serialize-javascript": "^5.0.1",
     "serve-favicon": "^2.5.0",
-    "vue": "^3.0.1",
-    "vue-router": "^4.0.0-beta.13"
+    "vue": "^3.0.2",
+    "vue-router": "^4.0.0-beta.13",
+    "vuex": "^4.0.0-beta.4",
+    "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -22,6 +25,7 @@
     "babel-loader": "^8.1.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "css-loader": "^4.3.0",
+    "css-minimizer-webpack-plugin": "^1.1.5",
     "eslint": "^7.10.0",
     "eslint-plugin-vue": "^7.0.1",
     "eslint-webpack-plugin": "^2.1.0",
@@ -29,7 +33,6 @@
     "hash-sum": "^2.0.0",
     "lodash.uniq": "^4.5.0",
     "mini-css-extract-plugin": "^0.11.2",
-    "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss": "^8.1.1",
     "postcss-loader": "^4.0.4",
     "rimraf": "^3.0.2",

@@ -7,12 +7,11 @@ const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader-v16');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = (env = {}) => ({
   mode: env.prod ? 'production' : 'development',
-  // devtool: env.prod ? 'source-map' : 'eval-cheap-module-source-map',
+  // devtool: env.prod ? 'source-map' : 'eval-cheap-source-map',
   output: {
     path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
@@ -47,7 +46,6 @@ module.exports = (env = {}) => ({
       },
       {
         test: /\.(sa|sc|c)ss$/,
-
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -71,17 +69,7 @@ module.exports = (env = {}) => ({
     ],
   },
   optimization: {
-    splitChunks: {
-      cacheGroups: {
-        styles: {
-          name: 'ultra-special-styles',
-          test: /c\.css$/,
-          chunks: 'all',
-          enforce: true,
-        },
-      },
-    },
-    minimize: env.prod ? false : false,
+    minimize: env.prod ? true : false,
     minimizer: [
       new TerserPlugin({
         extractComments: false,
@@ -89,6 +77,7 @@ module.exports = (env = {}) => ({
         parallel: true,
         sourceMap: env.prod ? false : true,
         terserOptions: {
+          /* creds to vue/cli */
           compress: {
             // turn off flags with small gains to speed up minification
             arrows: false,
@@ -125,7 +114,6 @@ module.exports = (env = {}) => ({
           },
         },
       }),
-      new OptimizeCSSAssetsPlugin(),
     ],
   },
   plugins: [
@@ -139,7 +127,7 @@ module.exports = (env = {}) => ({
     }),
     new webpack.DefinePlugin({
       __VUE_OPTIONS_API__: 'true',
-      __VUE_PROD_DEVTOOLS__: 'false',
+      __VUE_PROD_DEVTOOLS__: 'true',
     }),
   ],
 });

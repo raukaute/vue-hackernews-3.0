@@ -1,16 +1,9 @@
 <template>
   <div class="view">
     <item-list-nav v-bind="$attrs" />
-    <suspense>
-      <template #default>
-        <div class="news-list">
-          <item-list />
-        </div>
-      </template>
-      <template #fallback>
-        ...loading
-      </template>
-    </suspense>
+    <div class="news-list">
+      <item-list v-bind="$attrs" />
+    </div>
   </div>
 </template>
 
@@ -20,6 +13,7 @@ import ItemListNav from '@/components/ItemListNav.vue';
 import ItemList from '@/components/ItemList.vue';
 
 export default {
+  inheritAttrs: false,
   components: { ItemListNav, ItemList },
 };
 </script>
@@ -31,7 +25,8 @@ export default {
 }
 
 .news-list {
-  margin: 10px 0;
+  position: absolute;
+  margin: 30px 0;
   width: 100%;
   transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
 

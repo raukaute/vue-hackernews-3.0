@@ -6,6 +6,7 @@ const express = require('express'),
   favicon = require('serve-favicon'),
   app = express();
 
+const serialize = require('serialize-javascript');
 const { createBundleRenderer } = require('vue-bundle-renderer');
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -39,16 +40,34 @@ const serve = (path, cache) =>
   express.static(resolve(path), {
     maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0,
   });
+
 app.use(favicon('./src/assets/logo-48.png'));
-app.use('/dist', serve('./dist', false));
+app.use('/dist', serve('./dist', true));
 
 async function render(req, res) {
-  res.setHeader('Content-Type', 'text/html');
-
   const handleError = (err) => {
     res.status(500).send('500 | Internal Server Error');
     console.error(`error during render : ${req.url}`);
     console.error(err);
+  };
+
+  const renderState = (context) => {
+    const contextKey = 'state';
+    const windowKey = '__INITIAL_STATE__';
+    const state = serialize(context[contextKey]);
+    const autoRemove =
+      ';(function(){var s;(s=document.currentScript||document.scripts[document.scripts.length-1]).parentNode.removeChild(s);}());';
+    var nonceAttr = context.nonce ? ' nonce="' + context.nonce + '"' : '';
+    return context[contextKey]
+      ? '<script' +
+          nonceAttr +
+          '>window.' +
+          windowKey +
+          '=' +
+          state +
+          autoRemove +
+          '</script>'
+      : '';
   };
 
   const context = {
@@ -62,7 +81,8 @@ async function render(req, res) {
     handleError(err);
   }
   let { renderStyles, renderResourceHints, renderScripts } = context;
-  // Use loadash template
+
+  // TODO: Use loadash template
   const html = `
         <!DOCTYPE html>
             <html lang="en">
@@ -76,6 +96,7 @@ async function render(req, res) {
               <body>
                 <div id="app">${page}</div>
                 ${renderScripts()}
+                ${renderState(context)}
                 </body>
             </html>
         `;
@@ -88,7 +109,7 @@ async function render(req, res) {
       }
     });
   }
-
+  res.setHeader('Content-Type', 'text/html');
   res.send(html);
 }
 
