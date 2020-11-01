@@ -13,7 +13,8 @@ const IS_SETUP_RE = /export function setup/;
 function loader(source) {
   const loaderContex = this,
     { resourcePath } = loaderContex,
-    { index } = source.match(/(?<=export.*)\n/),
+     //@ TODO: this regexp could be nicer
+    { index } = source.match(/(?<=export.*)\r?\n/),
     id = hash_sum_1.default(resourcePath),
     isSetup = IS_SETUP_RE.test(source),
     code = isSetup
